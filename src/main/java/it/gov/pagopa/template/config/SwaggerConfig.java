@@ -1,6 +1,8 @@
 package it.gov.pagopa.template.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -14,5 +16,9 @@ import org.springframework.context.annotation.Configuration;
     description = "Api and Models"
   )
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SwaggerConfig {
+  static {
+    io.swagger.v3.core.jackson.ModelResolver.enumsAsRef = true;
+  }
 }
