@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Tests & Coverage
         id: tests
-        run: ./gradlew clean build jacocoTestReport --info
+        run: ./gradlew clean build jacocoTestReport -DtargetBranch=${{ github.event.pull_request.base.ref }} --info
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@master
