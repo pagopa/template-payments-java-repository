@@ -1,4 +1,4 @@
-package it.gov.pagopa.template.config;
+package it.gov.pagopa.template.config.rest;
 
 import it.gov.pagopa.template.performancelogger.RestInvokePerformanceLogger;
 import it.gov.pagopa.template.utils.HttpUtils;

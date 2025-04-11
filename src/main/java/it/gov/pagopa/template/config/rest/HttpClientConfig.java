@@ -1,4 +1,4 @@
-package it.gov.pagopa.template.config;
+package it.gov.pagopa.template.config.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
