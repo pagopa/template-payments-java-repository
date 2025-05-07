@@ -14,18 +14,18 @@ locals {
     repository = "" # Repository Name
   }
 
-  env_secrets = {
-    ENV_SECRET = "data.azurerm_key_vault_secret.CHANGE_ME.value"
-  }
-  env_variables = {
-    ENV_VARIABLE = "ENV_VARIABLE"
-  }
+  env_secrets   = {}
+  env_variables = {}
 
   repo_secrets = var.env_short == "p" ? {
-    SECRET = "SECRET"
+    SONAR_TOKEN       = data.azurerm_key_vault_secret.sonar_token[0].value
+    SLACK_WEBHOOK_URL = data.azurerm_key_vault_secret.slack_webhook[0].value
   } : {}
+
   repo_env = var.env_short == "p" ? {
-    ENV_VARIABLE = "ENV_VARIABLE"
+    SONARCLOUD_PROJECT_NAME = "CHANGE_ME"
+    SONARCLOUD_PROJECT_KEY  = "pagopa_CHANGE_ME"
+    SONARCLOUD_ORG          = "pagopa"
   } : {}
 
   map_repo = {
