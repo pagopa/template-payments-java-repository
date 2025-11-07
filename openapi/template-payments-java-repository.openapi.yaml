@@ -45,3 +45,5 @@ components:
             - GENERIC_ERROR
         message:
           type: string
+        traceId:
+          type: string
