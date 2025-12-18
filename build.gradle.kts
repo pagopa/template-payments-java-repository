@@ -1,12 +1,12 @@
 plugins {
   java
-  id("org.springframework.boot") version "3.5.6"
+  id("org.springframework.boot") version "4.0.0"
   id("io.spring.dependency-management") version "1.1.7"
   jacoco
-  id("org.sonarqube") version "6.3.1.5724"
-  id("com.github.ben-manes.versions") version "0.52.0"
-  id("org.openapi.generator") version "7.15.0"
-  id("com.gorylenko.gradle-git-properties") version "2.5.3"
+  id("org.sonarqube") version "7.2.1.6560"
+  id("com.github.ben-manes.versions") version "0.53.0"
+  id("org.openapi.generator") version "7.17.0"
+  id("com.gorylenko.gradle-git-properties") version "2.5.4"
 }
 
 group = "it.gov.pagopa.payhub"
@@ -29,22 +29,23 @@ repositories {
   mavenCentral()
 }
 
-val springDocOpenApiVersion = "2.8.13"
+val springDocOpenApiVersion = "3.0.0"
 val janinoVersion = "3.1.12"
-val openApiToolsVersion = "0.2.7"
-val micrometerVersion = "1.5.4"
-val httpClientVersion = "5.5"
+val openApiToolsVersion = "0.2.8"
+val micrometerVersion = "1.6.1"
+val httpClientVersion = "5.5.1"
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter")
-  implementation("org.springframework.boot:spring-boot-starter-web")
+  implementation("org.springframework.boot:spring-boot-starter-webmvc")
+  implementation("org.springframework.boot:spring-boot-starter-opentelemetry")
+  implementation("org.springframework.boot:spring-boot-starter-restclient")
+  implementation("org.springframework.data:spring-data-commons")
   implementation("org.springframework.boot:spring-boot-starter-validation")
   implementation("org.springframework.boot:spring-boot-starter-actuator")
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocOpenApiVersion")
   implementation("org.codehaus.janino:janino:$janinoVersion")
   implementation("io.micrometer:micrometer-tracing-bridge-otel:$micrometerVersion")
   implementation("io.micrometer:micrometer-registry-prometheus")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("org.openapitools:jackson-databind-nullable:$openApiToolsVersion")
   implementation("org.apache.httpcomponents.client5:httpclient5:$httpClientVersion")
 
@@ -53,7 +54,8 @@ dependencies {
   testAnnotationProcessor("org.projectlombok:lombok")
 
   //	Testing
-  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+  testImplementation("org.springframework.boot:spring-boot-starter-security-test")
   testImplementation("org.mockito:mockito-core")
   testImplementation("org.projectlombok:lombok")
 }
@@ -129,16 +131,18 @@ openApiGenerate {
   outputDir.set("$projectDir/build/generated")
   apiPackage.set("it.gov.pagopa.template.controller.generated")
   modelPackage.set("it.gov.pagopa.template.dto.generated")
-  configOptions.set(mapOf(
-    "dateLibrary" to "java8",
-    "requestMappingMode" to "api_interface",
-    "useSpringBoot3" to "true",
-    "interfaceOnly" to "true",
-    "useTags" to "true",
-    "useBeanValidation" to "true",
-    "generateConstructorWithAllArgs" to "true",
-    "generatedConstructorWithRequiredArgs" to "true",
-    "enumPropertyNaming" to "original",
-    "additionalModelTypeAnnotations" to "@lombok.experimental.SuperBuilder(toBuilder = true)"
-  ))
+  configOptions.set(
+    mapOf(
+      "dateLibrary" to "java8",
+      "requestMappingMode" to "api_interface",
+      "useSpringBoot3" to "true",
+      "interfaceOnly" to "true",
+      "useTags" to "true",
+      "useBeanValidation" to "true",
+      "generateConstructorWithAllArgs" to "true",
+      "generatedConstructorWithRequiredArgs" to "true",
+      "enumPropertyNaming" to "original",
+      "additionalModelTypeAnnotations" to "@lombok.experimental.SuperBuilder(toBuilder = true)"
+    )
+  )
 }
