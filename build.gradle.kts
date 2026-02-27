@@ -1,3 +1,5 @@
+import com.github.jk1.license.filter.SpdxLicenseBundleNormalizer
+import com.github.jk1.license.render.XmlReportRenderer
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -10,6 +12,7 @@ plugins {
   id("com.github.ben-manes.versions") version "0.53.0"
   id("org.openapi.generator") version "7.17.0"
   id("com.gorylenko.gradle-git-properties") version "2.5.4"
+  id("com.github.jk1.dependency-license-report") version "3.0.1"
 }
 
 group = "it.gov.pagopa.payhub"
@@ -26,6 +29,19 @@ configurations {
   compileOnly {
     extendsFrom(configurations.annotationProcessor.get())
   }
+  compileClasspath {
+    resolutionStrategy.activateDependencyLocking()
+  }
+}
+
+licenseReport {
+  renderers =
+    arrayOf(XmlReportRenderer("third-party-libs.xml", "Back-End Libraries"))
+  outputDir = "$projectDir/dependency-licenses"
+  filters = arrayOf(SpdxLicenseBundleNormalizer())
+}
+tasks.classes {
+  finalizedBy(tasks.generateLicenseReport)
 }
 
 repositories {
@@ -97,12 +113,6 @@ tasks {
     filesMatching("**/application.yml") {
       expand(projectInfo)
     }
-  }
-}
-
-configurations {
-  compileClasspath {
-    resolutionStrategy.activateDependencyLocking()
   }
 }
 
