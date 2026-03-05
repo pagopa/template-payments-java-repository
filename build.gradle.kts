@@ -53,6 +53,7 @@ val janinoVersion = "3.1.12"
 val openApiToolsVersion = "0.2.9"
 val micrometerVersion = "1.6.3"
 val httpClientVersion = "5.6"
+val httpCoreVersion = "5.4.1"
 
 // fix cve
 val jackson2CoreVersion = "2.21.1"
@@ -71,6 +72,7 @@ dependencies {
   implementation("io.micrometer:micrometer-registry-prometheus")
   implementation("org.openapitools:jackson-databind-nullable:$openApiToolsVersion")
   implementation("org.apache.httpcomponents.client5:httpclient5:$httpClientVersion")
+  implementation("org.apache.httpcomponents.core5:httpcore5:$httpCoreVersion")
 
   // CVE fix
   implementation("tools.jackson.core:jackson-core:$jackson3CoreVersion")
