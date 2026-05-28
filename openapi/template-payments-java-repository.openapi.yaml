@@ -44,6 +44,7 @@ components:
             - NOT_FOUND
             - BAD_REQUEST
             - GENERIC_ERROR
+            - TOO_MANY_REQUESTS
         code:
           type: string
         message:
