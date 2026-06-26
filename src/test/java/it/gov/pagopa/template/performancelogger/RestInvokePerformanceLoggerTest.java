@@ -35,9 +35,9 @@ class RestInvokePerformanceLoggerTest {
     @BeforeEach
     void init() {
         filter = new RestInvokePerformanceLogger();
+        setupMemoryAppender();
     }
 
-    @BeforeEach
     void setupMemoryAppender() {
         this.memoryAppender = PerformanceLoggerTest.buildPerformanceLoggerMemoryAppender(APPENDER_NAME);
     }

@@ -81,6 +81,7 @@ class ControllerExceptionHandlerTest {
   @BeforeEach
   void init() {
     TestUtils.clearDefaultTimezone();
+    setTraceId();
   }
 
   @Data
@@ -97,7 +98,6 @@ class ControllerExceptionHandlerTest {
 
   private final String traceId = "TRACEID";
 
-  @BeforeEach
   void setTraceId() {
     UtilitiesTest.setTraceId(traceId);
   }

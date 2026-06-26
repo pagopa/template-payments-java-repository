@@ -36,9 +36,9 @@ class ApiRequestPerformanceLoggerTest {
         httpServletRequestMock = Mockito.mock(HttpServletRequest.class);
         httpServletResponseMock = Mockito.mock(HttpServletResponse.class);
         filter = new ApiRequestPerformanceLogger();
+        setupMemoryAppender();
     }
 
-    @BeforeEach
     void setupMemoryAppender() {
         this.memoryAppender = PerformanceLoggerTest.buildPerformanceLoggerMemoryAppender(APPENDER_NAME);
     }

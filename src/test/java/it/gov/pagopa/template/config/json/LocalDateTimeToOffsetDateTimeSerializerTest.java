@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.TimeZone;
 
 import static org.mockito.Mockito.verify;
@@ -33,7 +34,7 @@ class LocalDateTimeToOffsetDateTimeSerializerTest {
 
   @Test
   void testDateSerializer() throws IOException {
-    LocalDateTime localDateTime = LocalDateTime.of(2025, 1, 16, 9, 15, 20);
+    LocalDateTime localDateTime = LocalDateTime.of(2025, Month.JANUARY, 16, 9, 15, 20);
 
     TimeZone.setDefault(TimeZone.getTimeZone("Europe/Rome"));
 
