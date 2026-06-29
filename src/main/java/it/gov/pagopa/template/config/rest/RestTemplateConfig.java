@@ -2,7 +2,7 @@ package it.gov.pagopa.template.config.rest;
 
 import it.gov.pagopa.template.performancelogger.RestInvokePerformanceLogger;
 import it.gov.pagopa.template.utils.HttpUtils;
-import it.gov.pagopa.template.utils.SecurityUtils;
+import it.gov.pagopa.template.utils.Utilities;
 import jakarta.annotation.Nonnull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
@@ -54,7 +54,7 @@ public class RestTemplateConfig {
                     String bodyString = ex.getResponseBodyAsString();
                     errorBodyLogger.info("{} {} Returned status {}: {}",
                         method,
-                        SecurityUtils.removePiiFromURI(url),
+                        Utilities.removePiiFromURI(url),
                         ex.getStatusCode(),
                         bodyString.replace("\n", "").replace("\r", ""));
                     throw ex;
