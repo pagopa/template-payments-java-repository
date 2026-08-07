@@ -1,4 +1,4 @@
-package it.gov.pagopa.template.exception;
+package it.gov.pagopa.template.exception.common;
 
 public class ForbiddenException extends BaseBusinessException {
   public ForbiddenException(String code, String message) {

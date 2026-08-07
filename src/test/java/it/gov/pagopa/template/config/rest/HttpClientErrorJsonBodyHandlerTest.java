@@ -1,8 +1,10 @@
 package it.gov.pagopa.template.config.rest;
 
 import it.gov.pagopa.template.config.json.JsonConfig;
+import it.gov.pagopa.template.dto.generated.ErrorFieldDTO;
 import it.gov.pagopa.template.dto.generated.ErrorDTO;
-import it.gov.pagopa.template.exception.*;
+import it.gov.pagopa.template.dto.generated.ErrorDTO.CategoryEnum;
+import it.gov.pagopa.template.exception.common.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,6 +19,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -29,11 +32,11 @@ class HttpClientErrorJsonBodyHandlerTest {
 
   private HttpClientErrorJsonBodyHandler<ErrorDTO> buildHttpClientErrorHandler(boolean bodyPrinterWhenError) {
     return new HttpClientErrorJsonBodyHandler<>(jsonMapper, "APPNAME", bodyPrinterWhenError,
-      ErrorDTO.class, ErrorDTO::getCode, ErrorDTO::getMessage);
+      ErrorDTO.class, e -> new PuErrorDTO(e.getCategory().getValue(), e.getCode(), e.getMessage(), e.getFields()));
   }
 
   private final URI url = new URI("http://www.sample.com");
-  private final ErrorDTO expectedErrorDTO = new ErrorDTO(ErrorDTO.CategoryEnum.BAD_REQUEST, "BADREQUEST", "MESSAGE", "TRACEID");
+  private final ErrorDTO expectedErrorDTO = new ErrorDTO(CategoryEnum.BAD_REQUEST, "BADREQUEST", "MESSAGE", List.of(new ErrorFieldDTO("FIELD", "FIELDERRORCODE", "FIELDERRORMESSAGE")), "TRACEID");
 
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
@@ -88,11 +91,14 @@ class HttpClientErrorJsonBodyHandlerTest {
     try (MockClientHttpResponse response = new MockClientHttpResponse(jsonMapper.writeValueAsBytes(expectedErrorDTO), HttpStatus.BAD_REQUEST)) {
 
       // When
-      InvalidValueException result = Assertions.assertThrows(InvalidValueException.class, () -> httpClientHandler.handleError(url, HttpMethod.GET, response));
+      RestInvokeInvalidValueException result = Assertions.assertThrows(RestInvokeInvalidValueException.class, () -> httpClientHandler.handleError(url, HttpMethod.GET, response));
 
       // Then
+      Assertions.assertEquals("APPNAME", result.getApplicationName());
+      Assertions.assertEquals(expectedErrorDTO.getCategory().getValue(), result.getCategory());
       Assertions.assertEquals(expectedErrorDTO.getCode(), result.getCode());
       Assertions.assertEquals(expectedErrorDTO.getMessage(), result.getMessage());
+      Assertions.assertEquals(expectedErrorDTO.getFields(), result.getFields());
     }
   }
 
@@ -113,15 +119,15 @@ class HttpClientErrorJsonBodyHandlerTest {
 
 
   private final Map<HttpStatus, Class<? extends BaseBusinessException>> httpStatus2ExpectedException = Map.of(
-    HttpStatus.CONFLICT, ConflictException.class,
-    HttpStatus.FORBIDDEN, ForbiddenException.class,
-    HttpStatus.UNAUTHORIZED, NotAuthorizedException.class
+    HttpStatus.CONFLICT, RestInvokeConflictException.class,
+    HttpStatus.FORBIDDEN, RestInvokeForbiddenException.class,
+    HttpStatus.UNAUTHORIZED, RestInvokeNotAuthorizedException.class
   );
 
   @Test
   void testBuildDefaultHttpClientExceptionTranscoder(){
     BiFunction<HttpStatusCodeException, ErrorDTO, RuntimeException> httpErrorTranscoder = HttpClientErrorJsonBodyHandler.buildDefaultHttpClientExceptionTranscoder("TEST", ErrorDTO::getCode, ErrorDTO::getMessage);
-    ErrorDTO errorDTO = new ErrorDTO(null, "BAD_REQUEST", "MESSAGE", null);
+    ErrorDTO errorDTO = new ErrorDTO(null, "BAD_REQUEST", "MESSAGE", null, null);
 
     for (HttpStatus httpStatus : HttpStatus.values()) {
       RuntimeException result = httpErrorTranscoder
@@ -139,7 +145,7 @@ class HttpClientErrorJsonBodyHandlerTest {
   @Test
   void testBuildDefaultHttpClientExceptionTranscoder_noErrorCodeFunction(){
     BiFunction<HttpStatusCodeException, ErrorDTO, RuntimeException> httpErrorTranscoder = HttpClientErrorJsonBodyHandler.buildDefaultHttpClientExceptionTranscoder("TEST", null, ErrorDTO::getMessage);
-    ErrorDTO errorDTO = new ErrorDTO(null, "BAD_REQUEST", "MESSAGE", null);
+    ErrorDTO errorDTO = new ErrorDTO(null, "BAD_REQUEST", "MESSAGE", null, null);
 
     for (HttpStatus httpStatus : HttpStatus.values()) {
       RuntimeException result = httpErrorTranscoder
