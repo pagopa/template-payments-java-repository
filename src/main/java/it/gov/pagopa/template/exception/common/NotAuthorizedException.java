@@ -1,4 +1,4 @@
-package it.gov.pagopa.template.exception;
+package it.gov.pagopa.template.exception.common;
 
 public class NotAuthorizedException extends BaseBusinessException {
   public NotAuthorizedException(String code, String message) {
